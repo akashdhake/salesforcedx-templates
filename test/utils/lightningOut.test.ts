@@ -30,12 +30,10 @@ describe('normalizeHostDomains', () => {
     expect(() => normalizeHostDomains(['http://example.com'])).to.throw(/https/i);
     const r = normalizeHostDomains(['http://localhost:3000']);
     expect(r.origins).to.deep.equal(['http://localhost:3000']);
-    expect(r.warnings.join(' ')).to.match(/localhost/i);
   });
-  it('dedupes case-insensitively with a warning', () => {
+  it('dedupes case-insensitively', () => {
     const r = normalizeHostDomains(['https://example.com', 'https://EXAMPLE.com:443']);
     expect(r.origins).to.deep.equal(['https://example.com']);
-    expect(r.warnings.join(' ')).to.match(/duplicate/i);
   });
   it('throws when two distinct origins collide on the same file token', () => {
     // https vs http localhost same host+port -> same token

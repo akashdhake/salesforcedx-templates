@@ -104,17 +104,14 @@ describe('LightningOutGenerator', () => {
     it('throws when a component reference is malformed', () => {
       expect(() => new LightningOutGenerator(baseOpts(outputDir, { components: ['badref'] }))).to.throw(/component/i);
     });
-    it('accepts a valid CLWR definition and warns it is experimental', () => {
-      const g = new LightningOutGenerator(baseOpts(outputDir, { runtime: 'CLWR' }));
-      expect(g.warnings.join(' ')).to.match(/experimental/i);
+    it('accepts a valid CLWR definition without throwing', () => {
+      expect(() => new LightningOutGenerator(baseOpts(outputDir, { runtime: 'CLWR' }))).to.not.throw();
     });
-    it('warns (does not throw) on empty components', () => {
-      const g = new LightningOutGenerator(baseOpts(outputDir, { components: [] }));
-      expect(g.warnings.join(' ')).to.match(/component/i);
+    it('does not throw on empty components', () => {
+      expect(() => new LightningOutGenerator(baseOpts(outputDir, { components: [] }))).to.not.throw();
     });
-    it('warns when the callback URL origin is not among the host domains', () => {
-      const g = new LightningOutGenerator(baseOpts(outputDir, { eca: { name: 'MyLoApp_ECA', contactEmail: 'dev@example.com', callbackUrl: 'https://other.example.com/cb' } }));
-      expect(g.warnings.join(' ')).to.match(/callback/i);
+    it('does not throw when the callback URL origin is not among the host domains', () => {
+      expect(() => new LightningOutGenerator(baseOpts(outputDir, { eca: { name: 'MyLoApp_ECA', contactEmail: 'dev@example.com', callbackUrl: 'https://other.example.com/cb' } }))).to.not.throw();
     });
   });
 

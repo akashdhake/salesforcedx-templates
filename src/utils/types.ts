@@ -112,8 +112,6 @@ export type CreateOutput = {
   outputDir: string;
   created: string[];
   rawOutput: string;
-  /** Non-fatal advisories surfaced to the caller (CLI / VS Code). Empty for generators that emit none. */
-  warnings?: string[];
 };
 
 /**

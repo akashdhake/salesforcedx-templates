@@ -79,8 +79,6 @@ abstract class NotYeoman {
     identical: [],
     forced: [],
   };
-  /** Non-fatal advisories accumulated during validateOptions()/generate(); returned by run(). */
-  public warnings: string[] = [];
   protected readonly _fs: typeof nodeFs;
   protected readonly _cwd: string;
   private _sourceRoot: string;
@@ -672,7 +670,6 @@ export abstract class BaseGenerator<
       outputDir,
       created,
       rawOutput,
-      warnings: this.warnings,
     };
   }
 

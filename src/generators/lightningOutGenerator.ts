@@ -92,7 +92,6 @@ export default class LightningOutGenerator extends BaseGenerator<LightningOutOpt
     if (Array.isArray(o.hostDomains) && o.hostDomains.length) {
       try {
         normalized = normalizeHostDomains(o.hostDomains);
-        this.warnings.push(...normalized.warnings);
       } catch (e) {
         errors.push((e as Error).message);
       }
@@ -102,28 +101,7 @@ export default class LightningOutGenerator extends BaseGenerator<LightningOutOpt
       throw new Error(nls.localize('InvalidLightningOutDefinition', ['\n  - ' + errors.join('\n  - ')]));
     }
 
-    // Non-fatal advisories (only reached when validation passed).
-    if (!(o.components && o.components.length)) {
-      this.warnings.push(nls.localize('WarnLightningOutNoComponents'));
-    }
-    if (o.runtime === 'CLWR') {
-      this.warnings.push(nls.localize('WarnLightningOutClwrExperimental'));
-    }
-    if (normalized && o.eca?.callbackUrl) {
-      try {
-        const cb = new URL(o.eca.callbackUrl);
-        const scheme = cb.protocol.replace(':', '').toLowerCase();
-        const port = cb.port && cb.port !== '443' ? `:${cb.port}` : '';
-        const cbOrigin = `${scheme}://${cb.hostname.toLowerCase()}${port}`;
-        if (!normalized.origins.includes(cbOrigin)) {
-          this.warnings.push(nls.localize('WarnLightningOutCallbackNotInHostDomains', [cbOrigin]));
-        }
-      } catch {
-        /* invalid callbackUrl already produced an error above */
-      }
-    }
-
-    this.normalizedHostDomains = normalized ?? { origins: [], fileTokens: [], warnings: [] };
+    this.normalizedHostDomains = normalized ?? { origins: [], fileTokens: [] };
   }
 
   public async generate(): Promise<void> {

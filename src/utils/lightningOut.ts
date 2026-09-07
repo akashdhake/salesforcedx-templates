@@ -21,8 +21,6 @@ export interface NormalizedHostDomains {
   origins: string[];
   /** Filesystem-safe token per origin (index-aligned with `origins`). */
   fileTokens: string[];
-  /** Non-fatal advisories (duplicate ignored, localhost http exception). */
-  warnings: string[];
 }
 
 /**
@@ -37,7 +35,7 @@ export function originToFileToken(origin: string): string {
     .replace(/^_+|_+$/g, '');
 }
 
-function normalizeOne(raw: string): { origin: string; warning?: string } {
+function normalizeOne(raw: string): { origin: string } {
   const trimmed = (raw ?? '').trim();
   if (trimmed.includes('*')) {
     throw new Error(nls.localize('InvalidLightningOutHostDomain', [raw, 'wildcards are not allowed']));
@@ -67,28 +65,23 @@ function normalizeOne(raw: string): { origin: string; warning?: string } {
   const defaultPort = scheme === 'https' ? '443' : '80';
   const port = u.port && u.port !== defaultPort ? `:${u.port}` : '';
   const origin = `${scheme}://${host}${port}`;
-  return { origin, warning: scheme === 'http' ? nls.localize('WarnLightningOutLocalhostHttp', [origin]) : undefined };
+  return { origin };
 }
 
 /**
  * Normalize a raw host-domain list into canonical origins + filename tokens.
  * Lowercases scheme/host, strips default ports, rejects wildcards/paths/non-https
- * (except localhost http), dedupes case-insensitively (with a warning), and throws
+ * (except localhost http), dedupes case-insensitively, and throws
  * if two distinct origins collide on the same filename token.
  */
 export function normalizeHostDomains(raw: string[]): NormalizedHostDomains {
   const origins: string[] = [];
   const fileTokens: string[] = [];
-  const warnings: string[] = [];
   const seen = new Set<string>();
   const tokenToOrigin = new Map<string, string>();
   for (const entry of raw) {
-    const { origin, warning } = normalizeOne(entry);
-    if (warning) {
-      warnings.push(warning);
-    }
+    const { origin } = normalizeOne(entry);
     if (seen.has(origin)) {
-      warnings.push(nls.localize('WarnLightningOutDuplicateHostDomain', [origin]));
       continue;
     }
     const token = originToFileToken(origin);
@@ -101,7 +94,7 @@ export function normalizeHostDomains(raw: string[]): NormalizedHostDomains {
     origins.push(origin);
     fileTokens.push(token);
   }
-  return { origins, fileTokens, warnings };
+  return { origins, fileTokens };
 }
 
 /**
