@@ -159,6 +159,13 @@ describe('LightningOutGenerator', () => {
       assertFileContent(path.join(outputDir, 'externalClientApps', 'MyLoApp_ECA.eca-meta.xml'), '<distributionState>Local</distributionState>');
       assertFileContent(path.join(outputDir, 'extlClntAppOauthSettings', 'MyLoApp_ECA.ecaOauth-meta.xml'), /<commaSeparatedOauthScopes>Web<\/commaSeparatedOauthScopes>/);
     });
+    it('hardcodes the embedding invariants isEnabled/enableOauthCorsPolicy/isFirstPartyCookieUseRequired', async () => {
+      const templateService = TemplateService.getInstance(process.cwd());
+      await templateService.create(TemplateType.LightningOut, baseOpts(outputDir));
+      assertFileContent(path.join(outputDir, 'lightningOutApps', 'MyLoApp.lightningOutApp-meta.xml'), '<isEnabled>true</isEnabled>');
+      assertFileContent(path.join(outputDir, 'settings', 'Security.settings-meta.xml'), '<enableOauthCorsPolicy>true</enableOauthCorsPolicy>');
+      assertFileContent(path.join(outputDir, 'settings', 'MyDomain.settings-meta.xml'), '<isFirstPartyCookieUseRequired>false</isFirstPartyCookieUseRequired>');
+    });
     it('keeps the consumer secret optional on the ECA global OAuth settings', async () => {
       const templateService = TemplateService.getInstance(process.cwd());
       await templateService.create(TemplateType.LightningOut, baseOpts(outputDir));
