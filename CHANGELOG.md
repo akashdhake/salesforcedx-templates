@@ -1,3 +1,12 @@
+# [66.15.0](https://github.com/forcedotcom/salesforcedx-templates/compare/66.14.0...66.15.0) (2026-09-09)
+
+
+### Features
+
+* rename ui-embedding shellTitle option to title and render title attribute ([#912](https://github.com/forcedotcom/salesforcedx-templates/issues/912)) ([b637510](https://github.com/forcedotcom/salesforcedx-templates/commit/b6375106c93bfe84297c8f63bd31e3f1d15440a6))
+
+
+
 # [66.14.0](https://github.com/forcedotcom/salesforcedx-templates/compare/66.13.9...66.14.0) (2026-09-03)
 
 
