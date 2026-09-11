@@ -116,7 +116,10 @@ export default class LightningOutGenerator extends BaseGenerator<LightningOutOpt
       this.destinationPath(
         path.join(this.outputdir, 'lightningOutApps', `${appName}.lightningOutApp-meta.xml`)
       ),
-      { name: appName, runtime, components: components ?? [], hostDomains: origins }
+      // Trim each ref so the emitted value matches what isValidComponentRef validated
+      // (it validates the trimmed form); otherwise surrounding whitespace would be baked
+      // into the XML and fail Core's parseComponentName at deploy.
+      { name: appName, runtime, components: (components ?? []).map((c) => c.trim()), hostDomains: origins }
     );
 
     // MyDomainSettings / SecuritySettings — server-side field merge (safe minimal files).

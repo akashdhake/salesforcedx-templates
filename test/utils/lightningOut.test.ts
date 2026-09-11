@@ -37,6 +37,14 @@ describe('normalizeHostDomains', () => {
     expect(() => normalizeHostDomains(['ftp://example.com'])).to.throw(/http or https/i);
     expect(() => normalizeHostDomains(['ws://example.com'])).to.throw(/http or https/i);
   });
+  it('rejects an origin carrying userinfo (mirrors Core isValidHostDomain)', () => {
+    expect(() => normalizeHostDomains(['https://user:pass@example.com'])).to.throw(/user info/i);
+    expect(() => normalizeHostDomains(['https://user@example.com'])).to.throw(/user info/i);
+  });
+  it('rejects a value that is not an absolute URL', () => {
+    expect(() => normalizeHostDomains(['example.com'])).to.throw(/valid absolute URL/i);
+    expect(() => normalizeHostDomains(['not a url'])).to.throw(/valid absolute URL/i);
+  });
   it('dedupes case-insensitively', () => {
     const r = normalizeHostDomains(['https://example.com', 'https://EXAMPLE.com:443']);
     expect(r.origins).to.deep.equal(['https://example.com']);

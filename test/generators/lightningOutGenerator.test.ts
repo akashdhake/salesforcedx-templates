@@ -153,6 +153,13 @@ describe('LightningOutGenerator', () => {
       assertFileContent(app, 'c:bar');
       assertFileContent(app, '<applicationName>MyLoApp</applicationName>');
     });
+    it('trims surrounding whitespace from a component ref before emitting it', async () => {
+      const templateService = TemplateService.getInstance(process.cwd());
+      await templateService.create(TemplateType.LightningOut, baseOpts(outputDir, { components: ['  c/foo  '] }));
+      const app = path.join(outputDir, 'lightningOutApps', 'MyLoApp.lightningOutApp-meta.xml');
+      // emitted value must equal the validated (trimmed) value — no space-padded componentName
+      assertFileContent(app, '<componentName>c/foo</componentName>');
+    });
     it('hardcodes distributionState=Local and OAuth scope Web', async () => {
       const templateService = TemplateService.getInstance(process.cwd());
       await templateService.create(TemplateType.LightningOut, baseOpts(outputDir));

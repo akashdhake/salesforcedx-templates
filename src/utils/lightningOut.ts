@@ -72,8 +72,8 @@ function normalizeOne(raw: string): { origin: string } {
 
 /**
  * Normalize a raw host-domain list into canonical origins + filename tokens.
- * Lowercases scheme/host, strips default ports, rejects wildcards/paths/non-https
- * (except localhost http), dedupes case-insensitively, and throws
+ * Lowercases scheme/host, strips default ports, rejects wildcards/paths and any
+ * scheme other than http/https, dedupes case-insensitively, and throws
  * if two distinct origins collide on the same filename token.
  */
 export function normalizeHostDomains(raw: string[]): NormalizedHostDomains {
