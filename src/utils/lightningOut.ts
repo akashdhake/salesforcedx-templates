@@ -48,11 +48,13 @@ function normalizeOne(raw: string): { origin: string } {
   }
   const scheme = u.protocol.replace(':', '').toLowerCase();
   const host = u.hostname.toLowerCase();
-  const isLocalhost = host === 'localhost' || host === '127.0.0.1';
-  if (scheme !== 'https' && !(scheme === 'http' && isLocalhost)) {
-    throw new Error(
-      nls.localize('InvalidLightningOutHostDomain', [raw, 'must be https (http allowed only for localhost)'])
-    );
+  // Mirror Core's LightningOutApp.isValidHostDomain: a host domain is an origin-style
+  // allowlist entry, so any http or https origin is accepted (http is not restricted to
+  // localhost). Other schemes (ftp/ws/...) are rejected. Since this generator is offline it
+  // can't know whether a domain is dev or prod, so it defers any https-in-production policy
+  // (e.g. Secure-cookie requirements) to deploy/runtime rather than rejecting http here.
+  if (scheme !== 'https' && scheme !== 'http') {
+    throw new Error(nls.localize('InvalidLightningOutHostDomain', [raw, 'must use an http or https scheme']));
   }
   if (u.username || u.password) {
     throw new Error(nls.localize('InvalidLightningOutHostDomain', [raw, 'must not contain user info']));

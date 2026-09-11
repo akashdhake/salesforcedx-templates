@@ -26,10 +26,16 @@ describe('normalizeHostDomains', () => {
   it('rejects a path/query/fragment', () => {
     expect(() => normalizeHostDomains(['https://example.com/app'])).to.throw(/path/i);
   });
-  it('rejects non-https except localhost http', () => {
-    expect(() => normalizeHostDomains(['http://example.com'])).to.throw(/https/i);
-    const r = normalizeHostDomains(['http://localhost:3000']);
-    expect(r.origins).to.deep.equal(['http://localhost:3000']);
+  it('accepts http for any host (not just localhost), mirroring Core isValidHostDomain', () => {
+    // Core accepts any http OR https origin; http is not restricted to localhost, so a custom
+    // local-dev alias like lo2-local.com over http must be allowed.
+    expect(normalizeHostDomains(['http://example.com']).origins).to.deep.equal(['http://example.com']);
+    expect(normalizeHostDomains(['http://lo2-local.com:8080']).origins).to.deep.equal(['http://lo2-local.com:8080']);
+    expect(normalizeHostDomains(['http://localhost:3000']).origins).to.deep.equal(['http://localhost:3000']);
+  });
+  it('rejects schemes other than http/https', () => {
+    expect(() => normalizeHostDomains(['ftp://example.com'])).to.throw(/http or https/i);
+    expect(() => normalizeHostDomains(['ws://example.com'])).to.throw(/http or https/i);
   });
   it('dedupes case-insensitively', () => {
     const r = normalizeHostDomains(['https://example.com', 'https://EXAMPLE.com:443']);

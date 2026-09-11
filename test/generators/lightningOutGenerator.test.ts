@@ -89,8 +89,11 @@ describe('LightningOutGenerator', () => {
     it('throws when hostDomains is empty', () => {
       expect(() => new LightningOutGenerator(baseOpts(outputDir, { hostDomains: [] }))).to.throw(/hostDomains/i);
     });
-    it('throws when a hostDomain is not an https origin', () => {
-      expect(() => new LightningOutGenerator(baseOpts(outputDir, { hostDomains: ['http://app.example.com'] }))).to.throw(/https/i);
+    it('accepts an http hostDomain (Core allows any http/https origin, not just localhost)', () => {
+      expect(() => new LightningOutGenerator(baseOpts(outputDir, { hostDomains: ['http://app.example.com'] }))).to.not.throw();
+    });
+    it('throws when a hostDomain uses a non-http(s) scheme', () => {
+      expect(() => new LightningOutGenerator(baseOpts(outputDir, { hostDomains: ['ftp://app.example.com'] }))).to.throw(/http or https/i);
     });
     it('throws when a hostDomain contains a wildcard', () => {
       expect(() => new LightningOutGenerator(baseOpts(outputDir, { hostDomains: ['https://*.example.com'] }))).to.throw(/wildcard/i);
