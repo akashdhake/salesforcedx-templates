@@ -80,14 +80,38 @@ describe('checkDeveloperName', () => {
 });
 
 describe('isValidComponentRef', () => {
-  it('accepts LWC namespace/name', () => {
+  it('accepts LWC module/slash "namespace/name"', () => {
     expect(isValidComponentRef('c/helloWorldButton')).to.be.true;
+    expect(isValidComponentRef('myNamespace/myComponent')).to.be.true;
+    expect(isValidComponentRef('ns_1/abc')).to.be.true; // digits/underscore allowed in the namespace
   });
-  it('accepts Aura namespace:Name', () => {
+  it('accepts LWC kebab "namespace-my-component", including multi-hyphen names', () => {
+    expect(isValidComponentRef('c-helloworld')).to.be.true;
+    expect(isValidComponentRef('ns-my-component')).to.be.true;
+    expect(isValidComponentRef('ns-my-cool-component123')).to.be.true;
+  });
+  it('accepts Aura "namespace:Name"', () => {
     expect(isValidComponentRef('c:helloWorld')).to.be.true;
+    expect(isValidComponentRef('ns:MyComponent')).to.be.true;
   });
-  it('rejects empty or namespace-less refs', () => {
+  it('trims surrounding whitespace before validating', () => {
+    expect(isValidComponentRef('  c/helloWorld  ')).to.be.true;
+  });
+  it('rejects empty, whitespace-only, null/undefined, or namespace-less refs', () => {
     expect(isValidComponentRef('')).to.be.false;
+    expect(isValidComponentRef('   ')).to.be.false;
+    expect(isValidComponentRef(undefined as unknown as string)).to.be.false;
+    expect(isValidComponentRef(null as unknown as string)).to.be.false;
     expect(isValidComponentRef('noNamespace')).to.be.false;
+  });
+  it('rejects a namespace that starts with an uppercase letter or a digit', () => {
+    expect(isValidComponentRef('C-helloWorld')).to.be.false;
+    expect(isValidComponentRef('1c-comp')).to.be.false;
+  });
+  it('rejects an empty, leading-hyphen, double-hyphen, or trailing-non-alphanumeric name', () => {
+    expect(isValidComponentRef('ns-')).to.be.false; // trailing hyphen / empty name
+    expect(isValidComponentRef('-comp')).to.be.false; // empty namespace
+    expect(isValidComponentRef('ns--comp')).to.be.false; // double hyphen after the separator
+    expect(isValidComponentRef('c/hello_')).to.be.false; // name must end alphanumeric
   });
 });

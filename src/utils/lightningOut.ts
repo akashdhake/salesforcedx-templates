@@ -113,7 +113,14 @@ export function checkDeveloperName(value: string, field: string, maxLength: numb
   return undefined;
 }
 
-/** True if `ref` is an LWC ("namespace/name") or Aura ("namespace:Name") component reference. */
+/**
+ * True if `ref` is a component reference in kebab ("ns-my-component"), module/slash
+ * ("ns/myComponent"), or Aura colon ("ns:MyComponent") form. This is a structural
+ * well-formedness check only: it mirrors Core's Aura-enabled component-name validator
+ * (setup_lightningout loApplicationEditHelper.validateComponentName). Because this
+ * generator is offline it can't read the org's Aura-in-Lightning-Out preference, so it
+ * always allows the colon (Aura) form and defers the org-policy decision to deploy time.
+ */
 export function isValidComponentRef(ref: string): boolean {
-  return /^[A-Za-z][A-Za-z0-9]*[/:][A-Za-z][A-Za-z0-9_]*$/.test((ref ?? '').trim());
+  return /^[a-z][a-zA-Z0-9_]*[-:/][A-Za-z][A-Za-z0-9_-]*[A-Za-z0-9]$/.test((ref ?? '').trim());
 }

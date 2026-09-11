@@ -91,5 +91,5 @@ export const messages = {
   InvalidLightningOutContactEmail: 'Invalid contact email "%s".',
   InvalidLightningOutCallbackUrl: 'Invalid callback URL "%s": must be an absolute https URL.',
   InvalidLightningOutComponent:
-    'Invalid component reference "%s": expected LWC "namespace/name" or Aura "namespace:Name".',
+    'Invalid component reference "%s": expected LWC "namespace-my-component" or "namespace/myComponent", or Aura "namespace:Name".',
 };
